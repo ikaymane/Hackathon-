@@ -100,3 +100,22 @@ def test_health_endpoint_reports_only_what_is_configured():
     assert body["status"] == "ok"
     assert set(body["routing"]) == set(ROLES)
     assert isinstance(body["providers_configured"], list)
+
+
+@pytest.mark.parametrize(
+    "provider,model,ok",
+    [
+        ("deepseek", "deepseek-v4-pro", False),  # v4-pro has no vision
+        ("deepseek", "deepseek-flash", True),
+        ("gemini", "deepseek-v4-pro", True),     # model is irrelevant off deepseek
+    ],
+)
+def test_vision_guard(provider, model, ok):
+    """Routing vision at a blind model must fail at build time, not mid-demo."""
+    from app.providers import check_vision
+
+    if ok:
+        check_vision(provider, model)
+    else:
+        with pytest.raises(ProviderNotConfigured, match="no vision support"):
+            check_vision(provider, model)

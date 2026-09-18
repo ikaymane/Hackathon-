@@ -44,6 +44,8 @@ def _build(provider: str, *, fast: bool, temperature: float) -> BaseChatModel:
 
     if provider in ("deepseek", "openai"):
         # DeepSeek speaks the OpenAI wire format, so one adapter covers both.
+        # (It also exposes an Anthropic-format endpoint at /anthropic, which we
+        # do not need while the OpenAI path carries tools and vision.)
         from langchain_openai import ChatOpenAI
 
         if provider == "deepseek":
@@ -62,11 +64,27 @@ def _build(provider: str, *, fast: bool, temperature: float) -> BaseChatModel:
     raise ValueError(f"unknown provider {provider!r}; expected one of gemini|anthropic|deepseek|openai")
 
 
+# deepseek-v4-pro has no vision support; deepseek-flash does. Routing vision at
+# v4-pro fails at the API with a confusing error, so catch it at build time.
+BLIND_DEEPSEEK_MODELS = ("deepseek-v4-pro",)
+
+
+def check_vision(provider: str, model: str) -> None:
+    """Pure so it can be tested without touching the environment."""
+    if provider == "deepseek" and model in BLIND_DEEPSEEK_MODELS:
+        raise ProviderNotConfigured(
+            f"LLM_VISION=deepseek with DEEPSEEK_MODEL={model}, which has no vision "
+            "support. Use deepseek-flash, or route vision at gemini."
+        )
+
+
 @lru_cache(maxsize=None)
 def get_model(role: str = "reasoner", *, temperature: float = 0.0) -> BaseChatModel:
     if role not in ROLES:
         raise ValueError(f"unknown role {role!r}; expected one of {ROLES}")
     provider = getattr(settings, role)
+    if role == "vision":
+        check_vision(provider, settings.deepseek_model)
     return _build(provider, fast=(role == "fast"), temperature=temperature)
 
 

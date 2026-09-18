@@ -30,6 +30,7 @@ Supabase is wired. It never claims a capability the process cannot prove.
 | `agents/` | What those three do, and what was deduplicated. See `agents/README.md`. |
 | `naiom-platform/` | Next.js 16 agent platform, ~40 API routes. One shared copy. |
 | `docs/design/` | AiOO station design language + the demo bundle. |
+| `docs/MODELS.md` | Which model for which role, with the numbers behind it. |
 
 ## Swapping models
 
@@ -40,7 +41,9 @@ LLM_REASONER=deepseek   # gemini | anthropic | deepseek | openai
 LLM_FAST=gemini
 ```
 
-DeepSeek rides the OpenAI adapter, so it needs only `DEEPSEEK_API_KEY`.
+DeepSeek rides the OpenAI adapter, so it needs only `DEEPSEEK_API_KEY`. Use
+`deepseek-flash`, not `deepseek-v4-pro` — cheaper, better, and the only one of
+the two with vision. See `docs/MODELS.md`.
 
 ## Verified on 2026-09-18
 
