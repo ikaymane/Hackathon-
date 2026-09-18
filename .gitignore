@@ -1,0 +1,25 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+*.tsbuildinfo
+
+# Env & secrets — never commit these
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# Runtime
+.langgraph_api/
+*.log
+.DS_Store
