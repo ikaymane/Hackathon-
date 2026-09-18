@@ -26,6 +26,10 @@ Supabase is wired. It never claims a capability the process cannot prove.
 | `agent/app/store.py` | Supabase. No-ops when unconfigured, so a missing DB never breaks a demo. |
 | `supabase/schema.sql` | `agent_runs` audit table + RLS. Domain tables go under the marker. |
 | `web/` | Frontend, scaffolded once we know whether the brief needs one. |
+| `.claude/agents/` | Nina, Sacha, Victor — loaded automatically, delegable by name. |
+| `agents/` | What those three do, and what was deduplicated. See `agents/README.md`. |
+| `naiom-platform/` | Next.js 16 agent platform, ~40 API routes. One shared copy. |
+| `docs/design/` | AiOO station design language + the demo bundle. |
 
 ## Swapping models
 
